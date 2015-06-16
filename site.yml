@@ -1,0 +1,56 @@
+---
+
+- name: Install node.js and other tools for developing node.js apps
+  hosts: nodejs
+  vars:
+    home: "/home/vagrant"
+    node_version: 0.12.4
+
+  tasks:
+    - name: Install tools using apt
+      apt: name={{ item }} state=present update_cache=yes
+      sudo: yes
+      with_items:
+        - make 
+        - curl 
+        - git-core
+        - build-essential 
+        - libssl-dev 
+        - tree
+        - tmux
+
+    - name: Copy .tmux.conf
+      copy: src=conf/tmux.conf dest="{{ home }}/.tmux.conf"
+
+    - name: Copy .vimrc
+      copy: src=conf/vimrc dest="{{ home }}/.vimrc"
+
+    - name: Copy .profile
+      copy: src=conf/profile dest="{{ home }}/.profile"
+
+    - name: Install tmuxinator gem
+      shell: "gem install tmuxinator"
+      sudo: yes
+
+    - name: Install nvm 
+      shell: "curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh"
+
+    - name: Restart machine
+      command: reboot "Ansible updates triggered"
+      sudo: true
+      async: 0
+      poll: 0
+      ignore_errors: true
+
+    - name: Waiting for machine to come back
+      local_action: wait_for host=nodejs state=started
+      sudo: false        
+
+    - name: "Install node.js -v{{ node_version }}"
+      shell: ". {{ home }}/.profile && nvm install {{ node_version }}"
+      sudo: false        
+
+    - name: "Set nvm alias default v{{ node_version }}"
+      shell: ". {{ home }}/.profile && nvm alias default {{ node_version }}"
+      sudo: false
+

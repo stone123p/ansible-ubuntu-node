@@ -13,11 +13,10 @@ The inventory file *hosts* defines the nodes in which the stacks should be confi
         host
 ```
 
-Here the server would be configured on the host called "host".
 The stack can be deployed using the following
 command:
 
 ```
-        ansible-playbook -i [hosts file] [site.yml file] 
+        ansible-playbook -i hosts site.yml 
 ```
 
