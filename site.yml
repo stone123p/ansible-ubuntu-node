@@ -7,16 +7,26 @@
     node_version: 0.12.4
 
   tasks:
+
+    - name: Import the public key used by the package management system.
+      shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+      sudo: true
+
+    - name: Create a list file for MongoDB.
+      shell: echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+      sudo: true
+
     - name: Install tools using apt
       apt: name={{ item }} state=present update_cache=yes
       sudo: yes
       with_items:
         - make 
         - curl 
-        - git-core
         - build-essential 
         - libssl-dev 
         - tree
+        - mongodb-org
+        - git-core
         - tmux
 
     - name: Copy .tmux.conf
@@ -53,4 +63,4 @@
     - name: "Set nvm alias default v{{ node_version }}"
       shell: ". {{ home }}/.profile && nvm alias default {{ node_version }}"
       sudo: false
-
+         
