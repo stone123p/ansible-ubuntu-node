@@ -12,12 +12,21 @@
       shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
       sudo: true
 
+
     - name: Create a list file for MongoDB.
       shell: echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
       sudo: true
 
+    - name: Create a list file for Redis.
+      shell: echo "deb http://ppa.launchpad.net/chris-lea/redis-server/ubuntu "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/redis-server3.list
+      sudo: true
+
+    - name: Update Redis list file.
+      shell: echo "deb http://ppa.launchpad.net/chris-lea/redis-server/ubuntu "$(lsb_release -sc)" main" | sudo tee -a /etc/apt/sources.list.d/redis-server3.list
+      sudo: true
+
     - name: Install tools using apt
-      apt: name={{ item }} state=present update_cache=yes
+      apt: name={{ item }} state=present update_cache=yes force=yes
       sudo: yes
       with_items:
         - make 
@@ -28,39 +37,5 @@
         - mongodb-org
         - git-core
         - tmux
+        - redis-server
 
-    - name: Copy .tmux.conf
-      copy: src=conf/tmux.conf dest="{{ home }}/.tmux.conf"
-
-    - name: Copy .vimrc
-      copy: src=conf/vimrc dest="{{ home }}/.vimrc"
-
-    - name: Copy .profile
-      copy: src=conf/profile dest="{{ home }}/.profile"
-
-    - name: Install tmuxinator gem
-      shell: "gem install tmuxinator"
-      sudo: yes
-
-    - name: Install nvm 
-      shell: "curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh"
-
-    - name: Restart machine
-      command: reboot "Ansible updates triggered"
-      sudo: true
-      async: 0
-      poll: 0
-      ignore_errors: true
-
-    - name: Waiting for machine to come back
-      local_action: wait_for host=nodejs state=started
-      sudo: false        
-
-    - name: "Install node.js -v{{ node_version }}"
-      shell: ". {{ home }}/.profile && nvm install {{ node_version }}"
-      sudo: false        
-
-    - name: "Set nvm alias default v{{ node_version }}"
-      shell: ". {{ home }}/.profile && nvm alias default {{ node_version }}"
-      sudo: false
-         
