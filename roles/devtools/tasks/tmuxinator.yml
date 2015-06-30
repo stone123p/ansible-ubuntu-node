@@ -1,0 +1,5 @@
+---
+# Install tmuxinator
+- name: Install tmuxinator gem
+  shell: "gem install tmuxinator"
+  sudo: yes

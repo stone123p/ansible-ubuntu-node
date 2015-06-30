@@ -1,0 +1,27 @@
+---
+# These tasks install required dependencies for Ruby
+- name: Install required dependencies for Ruby
+  apt: name={{ item }} state=present update_cache=yes
+  sudo: yes
+  with_items:
+    - make 
+    - curl 
+    - git-core
+    - zlib1g-dev 
+    - build-essential 
+    - libssl-dev 
+    - libreadline-dev 
+    - libyaml-dev 
+    - libsqlite3-dev 
+    - sqlite3 
+    - libxml2-dev 
+    - libxslt1-dev 
+    - libcurl4-openssl-dev 
+    - python-software-properties
+    - tree
+
+- name: Setting git config global by copying gitconfig to hosts
+  copy: src=gitconfig dest="{{ home }}/.gitconfig"
+
+- name: Setting vim config by copying .vimrc to hosts
+  copy: src=vimrc dest="{{ home }}/.vimrc"

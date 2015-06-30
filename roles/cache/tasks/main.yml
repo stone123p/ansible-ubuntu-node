@@ -1,0 +1,17 @@
+---
+# Install Redis cache server
+
+- name: Create a list file for Redis.
+  shell: echo "deb http://ppa.launchpad.net/chris-lea/redis-server/ubuntu "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/redis-server3.list
+  sudo: true
+
+- name: Update Redis list file.
+  shell: echo "deb http://ppa.launchpad.net/chris-lea/redis-server/ubuntu "$(lsb_release -sc)" main" | sudo tee -a /etc/apt/sources.list.d/redis-server3.list
+  sudo: true
+
+- name: Install tools using apt
+  apt: name={{ item }} state=present update_cache=yes force=yes
+  sudo: yes
+  with_items:
+    - redis-server
+
