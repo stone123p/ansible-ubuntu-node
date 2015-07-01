@@ -1,6 +1,6 @@
 ---
 # These tasks install required dependencies for Ruby
-- name: Install required dependencies for Ruby
+- name: Install common packages
   apt: name={{ item }} state=present update_cache=yes
   sudo: yes
   with_items:
